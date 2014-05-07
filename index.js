@@ -17,6 +17,11 @@ web.get('/', function(req, res){
   res.end("I AM WIZARDBOT");
 });
 
+web.post('/messages', function(req,res) {
+  wlog(req.body);
+  wlog(req.params);
+  res.end("");
+});
 
 function wlog () {
   var args = [].slice.apply(arguments);
