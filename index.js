@@ -2,8 +2,11 @@ var config = require('./config');
 
 var express = require('express');
 var morgan  = require('morgan');
+var bodyParser = require('body-parser');
+
 var web = express();
 web.use(morgan());
+web.use(bodyParser());
 web.listen(config.port);
 wlog("Listening for http on " + config.port);
 
@@ -18,8 +21,8 @@ web.get('/', function(req, res){
 });
 
 web.post('/messages', function(req,res) {
-  wlog(req.body);
   wlog(req.params);
+  wlog(req.body);
   res.end("");
 });
 
