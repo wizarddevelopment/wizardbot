@@ -21,8 +21,7 @@ web.get('/', function(req, res){
 });
 
 web.post('/messages', function(req,res) {
-  wlog(req.params);
-  wlog(req.body);
+  sendHipChatMessage(req.body);
   res.end("");
 });
 
@@ -37,6 +36,15 @@ function wlog () {
 //     channel: '#test',
 //     username: 'Bot'
 // });
+
+var sendHipChatMessage = function(msg) {
+  hipbot.sendMessage({
+    room: config.hipchat.room,
+    from: msg.user_name + " (bot)",
+    message: msg.text,
+    message_format: 'text'
+  });
+};
 
 var getHipChatMessages = function (cb) {
 
@@ -62,14 +70,7 @@ var getHipChatMessages = function (cb) {
   }, ignorebot);
 };
 
-getHipChatMessages(function(err, data){
-  if (err) { return console.error(err); }
-  console.log(data);
-});
-
-// hipchatter.get_room(config.hipchat.room, console.log);
-
-// hipchatter.notify('test',{
-//   message: '<b>I AM A ROBOT</b>',
-//   token: 'O82nQQEk88uFR6PYAec2JsFs3r6RGol0RRM569SG',
-// }, console.log);
+// getHipChatMessages(function(err, data){
+//   if (err) { return console.error(err); }
+//   console.log(data);
+// });
