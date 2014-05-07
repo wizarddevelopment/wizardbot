@@ -105,7 +105,7 @@ var pollHipChat = function(){
     hipchatMessages = hipchatMessages.concat(newMessages);
     wlog("found " + newMessages.length + " new messags");
 
-    setTimeout(pollHipChat, 2000);
+    setTimeout(pollHipChat, 5000);
   });
 
 };
