@@ -38,11 +38,16 @@ function wlog () {
 // });
 
 var sendHipChatMessage = function(msg) {
-  hipbot.sendMessage({
+  wlog("relaying to hipchat " + msg.user_name + ": " + msg.text);
+  hipbot.postMessage({
     room: config.hipchat.room,
     from: msg.user_name + " (bot)",
     message: msg.text,
     message_format: 'text'
+  }, function(data,err){
+    if (err) {
+      wlog("Error sending message from " + msg.user_name, err);
+    }
   });
 };
 
