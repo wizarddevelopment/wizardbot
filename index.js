@@ -20,6 +20,7 @@ web.get('/', function(req, res){
   res.end("I AM WIZARDBOT");
 });
 
+// messages from slack
 web.post('/messages', function(req,res) {
   sendHipChatMessage(req.body);
   res.end("");
@@ -30,12 +31,6 @@ function wlog () {
   args.unshift("WIZARDBOT:");
   console.log.apply(console, args);
 }
-
-// slackbot.send({
-//     text: 'Howdy!',
-//     channel: '#test',
-//     username: 'Bot'
-// });
 
 var sendHipChatMessage = function(msg) {
   wlog("relaying to hipchat " + msg.user_name + ": " + msg.text);
@@ -62,7 +57,7 @@ var getHipChatMessages = function (cb) {
     });
 
     data = data.map(function(msg) {
-      msg.username = msg.from.name;
+      msg.user_name = msg.from.name;
       msg.text = msg.message;
       return msg;
     });
@@ -75,7 +70,44 @@ var getHipChatMessages = function (cb) {
   }, ignorebot);
 };
 
-// getHipChatMessages(function(err, data){
-//   if (err) { return console.error(err); }
-//   console.log(data);
-// });
+var sendSlackMessage = function (msg) {
+
+  slackbot.send({
+      text: msg.text,
+      channel: config.slack.room,
+      username: msg.user_name + ' (bot)'
+  });
+
+};
+
+var hipchatMessages = [];
+var pollHipChat = function(){
+  wlog("checking for hipchat");
+
+  getHipChatMessages(function(err, data){
+    if (err) {
+      wlog("Error polling hipchat backing off 30 seconds");
+      setTimeout(pollHipChat, 30000);
+      return;
+    }
+
+    var newMessages = data.filter(function(msg){
+      for (var i =0; i < hipchatMessages.length; i++){
+        var oldmsg = hipchatMessages[i];
+        if (msg.username === oldmsg.username && msg.text === oldmsg.text) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    newMessages.forEach(sendSlackMessage);
+    hipchatMessages = hipchatMessages.concat(newMessages);
+    wlog("found " + newMessages.length + " new messags");
+
+    setTimeout(pollHipChat, 2000);
+  });
+
+};
+
+pollHipChat();
