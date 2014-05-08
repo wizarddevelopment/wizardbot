@@ -23,6 +23,7 @@
     "node-hipchat": "~0.4.5",
     "express": "~4.1.1",
     "morgan": "~1.0.1",
-    "body-parser": "~1.0.2"
+    "body-parser": "~1.0.2",
+    "request": "~2.34.0"
   }
 }

@@ -1,5 +1,7 @@
 var config = require('./config');
 
+var request = require('request');
+
 var express = require('express');
 var morgan  = require('morgan');
 var bodyParser = require('body-parser');
@@ -119,3 +121,10 @@ var pollHipChat = function(dont_send){
 };
 
 pollHipChat(true);
+
+
+setInterval(function(){
+  request.head('http://wizardbot.herokuapp.com/messages', function(){
+    wlog('waking myself up');
+  });
+},60000);
