@@ -33,6 +33,11 @@ function wlog () {
 }
 
 var sendHipChatMessage = function(msg) {
+  if (msg.user_id === 'USLACKBOT') {
+    wlog("skipping message from myself " + msg.user_name + ": " + msg.text);
+    return;
+  }
+
   wlog("relaying to hipchat " + msg.user_name + ": " + msg.text);
   hipbot.postMessage({
     room: config.hipchat.room,
@@ -81,7 +86,7 @@ var sendSlackMessage = function (msg) {
 };
 
 var hipchatMessages = [];
-var pollHipChat = function(){
+var pollHipChat = function(dont_send){
   wlog("checking for hipchat");
 
   getHipChatMessages(function(err, data){
@@ -101,13 +106,16 @@ var pollHipChat = function(){
       return true;
     });
 
-    newMessages.forEach(sendSlackMessage);
     hipchatMessages = hipchatMessages.concat(newMessages);
     wlog("found " + newMessages.length + " new messags");
+
+    if (!dont_send) {
+      newMessages.forEach(sendSlackMessage);
+    }
 
     setTimeout(pollHipChat, 5000);
   });
 
 };
 
-pollHipChat();
+pollHipChat(true);
