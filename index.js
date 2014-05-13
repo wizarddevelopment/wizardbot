@@ -46,7 +46,7 @@ var sendHipChatMessage = function(msg) {
     from: msg.user_name + " (bot)",
     message: msg.text,
     message_format: 'text',
-    notify: 0
+    notify: 1
   }, function(data,err){
     if (err) {
       wlog("Error sending message from " + msg.user_name, err);
